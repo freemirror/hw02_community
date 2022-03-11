@@ -1,14 +1,19 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Group
+from django.core.paginator import Paginator
+
 
 VIEW_LIMIT = 10
 
 
 def index(request):
     template = 'posts/index.html'
-    posts = Post.objects.order_by('-pub_date')[:VIEW_LIMIT]
+    posts = Post.objects.order_by('-pub_date')
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
-        'posts': posts,
+        'page_obj': page_obj,
     }
     return render(request, template, context)
 
